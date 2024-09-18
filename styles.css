@@ -78,7 +78,7 @@ video {
     height: 100%;
     background-color: #222;
     box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-    transition: right 1s ease;
+    transition: right 5s ease;
     padding: 20px;
     color: white;
 }
