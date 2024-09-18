@@ -31,6 +31,7 @@ body {
     position: relative;
     border: 2px solid #666;
     border-radius: 5px;
+    overflow: hidden; /* Ensure content doesn't overflow */
 }
 
 .username {
@@ -47,6 +48,7 @@ video {
     width: 100%;
     height: 100%;
     border-radius: 5px;
+    object-fit: cover; /* Ensures the video covers the entire area */
 }
 
 .controls {
