@@ -6,6 +6,9 @@ const videoIcon = document.getElementById('video-icon');
 const user1Video = document.getElementById('user1-video'); // Your video
 const user2Video = document.getElementById('user2-video'); // Placeholder for User 2
 
+// Generate a unique identifier for each user
+const userId = Math.floor(Math.random() * 1000000);
+
 // WebSocket connection
 const socket = new WebSocket('wss://befitting-snowy-appliance.glitch.me');
 const peerConnection = new RTCPeerConnection();
@@ -13,21 +16,23 @@ const peerConnection = new RTCPeerConnection();
 socket.onmessage = async (event) => {
     const message = JSON.parse(event.data);
 
-    if (message.offer) {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
-        const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
-        socket.send(JSON.stringify({ answer }));
-    } else if (message.answer) {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
-    } else if (message.candidate) {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+    if (message.userId !== userId) {
+        if (message.offer) {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            socket.send(JSON.stringify({ answer, userId }));
+        } else if (message.answer) {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
+        } else if (message.candidate) {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+        }
     }
 };
 
 peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
-        socket.send(JSON.stringify({ candidate: event.candidate }));
+        socket.send(JSON.stringify({ candidate: event.candidate, userId }));
     }
 };
 
@@ -47,7 +52,7 @@ peerConnection.ontrack = (event) => {
 // Create and send an offer
 peerConnection.createOffer()
     .then(offer => peerConnection.setLocalDescription(offer))
-    .then(() => socket.send(JSON.stringify({ offer: peerConnection.localDescription })));
+    .then(() => socket.send(JSON.stringify({ offer: peerConnection.localDescription, userId })));
 
 settingsIcon.addEventListener('click', () => {
     settingsPanel.classList.toggle('open');
