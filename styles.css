@@ -73,7 +73,7 @@ video {
 .settings-panel {
     position: fixed;
     top: 0;
-    right: -270px; /* Hide the panel initially */
+    right: -300px; /* Hide the panel initially */
     width: 250px;
     height: 100%;
     background-color: #222;
